@@ -1,0 +1,48 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:company.company,company_account_number:"
+msgid "Default Account Number"
+msgstr "Número cuenta bancaria"
+
+msgctxt "field:company.company,company_sepa_batch_booking_selection:"
+msgid "Default Booking"
+msgstr "Indicador apunte en cuenta"
+
+msgctxt "field:company.company,company_sepa_batch_booking:"
+msgid "Default Booking"
+msgstr "Indicador apunte en cuenta"
+
+msgctxt "field:company.company,company_sepa_charge_bearer:"
+msgid "Default Charge Bearer"
+msgstr "Clausula de Gastos"
+
+msgctxt "selection:company.company,company_sepa_batch_booking_selection:"
+msgid "Batch"
+msgstr "Por Lotes"
+
+msgctxt "selection:company.company,company_sepa_batch_booking_selection:"
+msgid "Per Transaction"
+msgstr "Por Cada Cargo"
+
+msgctxt "selection:company.company,company_sepa_charge_bearer:"
+msgid "Debtor"
+msgstr "Deudor"
+
+msgctxt "selection:company.company,company_sepa_charge_bearer:"
+msgid "Creditor"
+msgstr "Acreedor"
+
+msgctxt "selection:company.company,company_sepa_charge_bearer:"
+msgid "Shared"
+msgstr "Compartidos"
+
+msgctxt "selection:company.company,company_sepa_charge_bearer:"
+msgid "Service Level"
+msgstr "Reglas del Servicio"
+
+
+msgctxt "view:company.company:"
+msgid "Default Values for Scheduled Actions"
+msgstr "Valores por defecto para Acciones Planificadas"

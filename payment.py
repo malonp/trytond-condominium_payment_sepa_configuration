@@ -48,6 +48,15 @@ class CondoPaymentGroup:
         super(CondoPaymentGroup, cls).__setup__()
         cls._order.insert(0, ('reference', 'DESC'))
 
+    @staticmethod
+    def default_date():
+        pool = Pool()
+        Date = pool.get('ir.date')
+        d = Date.today()
+        #set tomorrow (or the next business day after tomorrow) as date
+        next = d + datetime.timedelta(days= 7-d.weekday() if d.weekday()>3 else 1)
+        return next
+
     @classmethod
     def search_readonly(cls, name, domain):
         user = Transaction().user
@@ -74,7 +83,9 @@ class CondoPaymentGroup:
                                                               ('account.active', '=', True),
                                                               ('type', '=', 'iban'),
                                                              ])
-                if len(bankaccountnumber)==1: #Only condos with one bank account number
+                if (len(bankaccountnumber)==1 or condo[0].company_account_number) and\
+                    condo[0].company_sepa_batch_booking is not None and\
+                    condo[0].company_sepa_charge_bearer is not None:
                     if 'dates' in kwargs:
                         #get biggest date
                         date = sorted([d[2] for d in filter(lambda x:not x[1], kwargs['dates'])], reverse=True)[0]
@@ -89,71 +100,9 @@ class CondoPaymentGroup:
                                                        '.' +
                                                        '{:04d}'.format(date_arg.year)[-2:],
                                            company = condo[0],
-                                           account_number = bankaccountnumber[0],
+                                           account_number = condo[0].company_account_number or bankaccountnumber[0],
                                            date = date_arg,
-                                           sepa_charge_bearer = 'SLEV')
+                                           sepa_batch_booking = condo[0].company_sepa_batch_booking,
+                                           sepa_charge_bearer = condo[0].company_sepa_charge_bearer,
+                                           )
                         paymentgroup.save()
-
-    @classmethod
-    def PrepareAllPaymentsGroup(cls):
-        pool = Pool()
-        banknumbers = pool.get('bank.account.number').__table__()
-        bankaccounts = pool.get('bank.account').__table__()
-        accountparties = pool.get('bank.account-party.party').__table__()
-        parties = pool.get('party.party').__table__()
-        companies = pool.get('company.company').__table__()
-
-        cursor = Transaction().cursor
-
-        #SELECT a.id, a.number, e.id, d.id, d.name FROM bank_account_number AS a
-        #    INNER JOIN bank_account AS b ON a.account=b.id
-        #    INNER JOIN "bank_account-party_party" AS c ON b.id=c.account
-        #    INNER JOIN party_party AS d ON c.owner=d.id
-        #    INNER JOIN company_company AS e ON d.id=e.party
-        # WHERE a.type='iban' AND b.active<>0 AND d.active<>0 AND e.is_Condominium<>0 AND e.sepa_creditor_identifier<>""
-        # GROUP BY e.id
-        # HAVING COUNT(e.id)=1
-        # ORDER BY e.id;
-        cursor.execute(*banknumbers.join(bankaccounts,
-                                     condition=banknumbers.account == bankaccounts.id).join(
-                                     accountparties,
-                                     condition=bankaccounts.id == accountparties.account).join(
-                                     parties,
-                                     condition=accountparties.owner == parties.id).join(
-                                     companies,
-                                     condition=parties.id == companies.party).select(
-                                     Max(banknumbers.id), Max(banknumbers.number_compact), companies.id,
-                                     where=((banknumbers.type == 'iban') &
-                                            (bankaccounts.active == True) &
-                                            (parties.active == True) &
-                                            (companies.is_Condominium == True) &
-                                            (companies.sepa_creditor_identifier != None)),
-                                     group_by=companies.id,
-                                     having=(Count(companies.id)==1)))
-
-        Date = pool.get('ir.date')
-        d = Date.today()
-        ddd = d.replace(day = 2,
-                        month = d.month+1 if d.month<12 else 1,
-                        year = d.year if d.month<12 else d.year+1)
-
-        #TODO: Check that condo has mandates
-        values = []
-        for (idb, number_compact, idc) in cursor.fetchall():
-            record = {
-                    'reference':          '{:04d}'.format(ddd.year) +
-                                          '_' +
-                                          '{:02d}'.format(ddd.month) +
-                                          '-' +
-                                          number_compact [8:12] +
-                                          '.' +
-                                          '{:04d}'.format(ddd.year)[-2:],
-                    'company':            idc,
-                    'account_number':     idb,
-                    'date':               ddd + datetime.timedelta(days= 2 if ddd.weekday()>4 else 0),
-                    'sepa_charge_bearer': 'SLEV'
-                   }
-            values.append(record)
-
-        cls.create(values)
-

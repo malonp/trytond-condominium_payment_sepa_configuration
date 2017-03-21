@@ -22,10 +22,12 @@
 
 from trytond.pool import Pool
 from .payment import *
+from .company import *
 
 
 def register():
     Pool.register(
+        Company,
         CondoPain,
         CondoPaymentGroup,
         module='condominium_payment_sepa_configuration', type_='model')

@@ -20,8 +20,6 @@
 ##############################################################################
 
 
-from sql.aggregate import Count, Max
-
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
@@ -78,11 +76,8 @@ class CondoPaymentGroup:
                                   ])
 
             if (len(condo)==1 and len(condo[0].sepa_mandates)>0):
-                BankAccountNumber = Pool().get('bank.account.number')
-                bankaccountnumber = BankAccountNumber.search([('account.id', 'in', condo[0].party.bank_accounts),
-                                                              ('account.active', '=', True),
-                                                              ('type', '=', 'iban'),
-                                                             ])
+                bankaccountnumber = [ b for b in condo[0].party.bank_accounts if b.account.active and b.type=='iban' ]
+
                 if (len(bankaccountnumber)==1 or condo[0].company_account_number) and\
                     condo[0].company_sepa_batch_booking is not None and\
                     condo[0].company_sepa_charge_bearer is not None:

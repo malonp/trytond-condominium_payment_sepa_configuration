@@ -48,7 +48,7 @@ class Company:
             ('1', 'Batch'),
             ('0', 'Per Transaction'),
              ], 'Default Booking',
-        )
+        sort=False,)
     company_sepa_batch_booking = fields.Function(fields.Boolean('Default Booking'),
         getter='get_company_sepa_batch_booking',
         )
@@ -59,7 +59,7 @@ class Company:
             ('SHAR', 'Shared'),
             ('SLEV', 'Service Level'),
             ], 'Default Charge Bearer',
-        )
+        sort=False,)
 
     @staticmethod
     def default_company_sepa_batch_booking_selection():

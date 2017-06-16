@@ -44,7 +44,8 @@ class CondoPaymentGroup:
     @classmethod
     def __setup__(cls):
         super(CondoPaymentGroup, cls).__setup__()
-        cls._order.insert(0, ('reference', 'DESC'))
+        cls._order.insert(0, ('date', 'DESC'))
+        cls._order.insert(1, ('reference', 'DESC'))
 
     @staticmethod
     def default_date():

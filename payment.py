@@ -92,7 +92,7 @@ class CondoPaymentGroup:
                                                        '_' +
                                                        '{:02d}'.format(date_arg.month) +
                                                        '-' +
-                                                       bankaccountnumber[0].number_compact [8:12] +
+                                                       (condo[0].company_account_number or bankaccountnumber[0]).number_compact [8:12] +
                                                        '.' +
                                                        '{:04d}'.format(date_arg.year)[-2:],
                                            company = condo[0],

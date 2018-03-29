@@ -24,9 +24,13 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 import datetime
-
+import logging
 
 __all__ = ['CondoPain', 'CondoPaymentGroup']
+
+
+logger = logging.getLogger(__name__)
+
 
 class CondoPain:
     __metaclass__ = PoolMeta
@@ -88,17 +92,21 @@ class CondoPaymentGroup:
 
                     if date:
                         date_arg = date.date()
-                        paymentgroup = cls(reference = '{:04d}'.format(date_arg.year) +
-                                                       '_' +
-                                                       '{:02d}'.format(date_arg.month) +
-                                                       '-' +
-                                                       (condo[0].company_account_number or bankaccountnumber[0]).number_compact [8:12] +
-                                                       '.' +
-                                                       '{:04d}'.format(date_arg.year)[-2:],
-                                           company = condo[0],
-                                           account_number = condo[0].company_account_number or bankaccountnumber[0],
-                                           date = date_arg,
-                                           sepa_batch_booking = condo[0].company_sepa_batch_booking,
-                                           sepa_charge_bearer = condo[0].company_sepa_charge_bearer,
-                                           )
-                        paymentgroup.save()
+                        reference = '{:04d}'.format(date_arg.year) + '_' + \
+                                    '{:02d}'.format(date_arg.month) + '-' + \
+                                    (condo[0].company_account_number or bankaccountnumber[0]).number_compact [8:12] + '.' + \
+                                    '{:04d}'.format(date_arg.year)[-2:]
+
+                        payments = cls.search([('company', '=', condo[0]),
+                                               ('reference', '=', reference),])
+                        if not len(payments):
+                            paymentgroup = cls(reference = reference,
+                                               company = condo[0],
+                                               account_number = condo[0].company_account_number or bankaccountnumber[0],
+                                               date = date_arg,
+                                               sepa_batch_booking = condo[0].company_sepa_batch_booking,
+                                               sepa_charge_bearer = condo[0].company_sepa_charge_bearer,
+                                               )
+                            paymentgroup.save()
+                        else:
+                            logger.error('Unable to create condo payment group with reference: %s for %s', reference, condo[0].party.name)

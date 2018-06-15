@@ -28,8 +28,7 @@ from trytond.pyson import Eval, If, Bool
 __all__ = ['Company']
 
 
-class Company:
-    __metaclass__ = PoolMeta
+class Company(metaclass=PoolMeta):
     __name__ = 'company.company'
 
     company_account_number = fields.Many2One('bank.account.number', 'Default Account Number',

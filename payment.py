@@ -32,8 +32,7 @@ __all__ = ['CondoPain', 'CondoPaymentGroup']
 logger = logging.getLogger(__name__)
 
 
-class CondoPain:
-    __metaclass__ = PoolMeta
+class CondoPain(metaclass=PoolMeta):
     __name__ = 'condo.payment.pain'
 
     @classmethod
@@ -41,8 +40,7 @@ class CondoPain:
         super(CondoPain, cls).__setup__()
         cls._order.insert(0, ('reference', 'DESC'))
 
-class CondoPaymentGroup:
-    __metaclass__ = PoolMeta
+class CondoPaymentGroup(metaclass=PoolMeta):
     __name__ = 'condo.payment.group'
 
     @classmethod

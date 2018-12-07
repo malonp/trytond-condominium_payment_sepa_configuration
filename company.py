@@ -35,7 +35,7 @@ class Company(metaclass=PoolMeta):
         ondelete='SET NULL',
         domain=[
             ('type', '=', 'iban'),
-            If(Bool(Eval('account.owners.active')),
+            If((Eval('company.party.active'), '=', True),
                                      [('account.active', '=', True),],
                                      []
             ),

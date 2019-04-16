@@ -31,34 +31,27 @@ __all__ = ['Company']
 class Company(metaclass=PoolMeta):
     __name__ = 'company.company'
 
-    company_account_number = fields.Many2One('bank.account.number', 'Default Account Number',
+    company_account_number = fields.Many2One(
+        'bank.account.number',
+        'Default Account Number',
         ondelete='SET NULL',
         domain=[
             ('type', '=', 'iban'),
-            If((Eval('company.party.active'), '=', True),
-                                     [('account.active', '=', True),],
-                                     []
-            ),
+            If((Eval('company.party.active'), '=', True), [('account.active', '=', True)], []),
             ('account.owners.companies', '=', Eval('id')),
-            ],
-        )
-    company_sepa_batch_booking_selection = fields.Selection([
-            (None, ''),
-            ('1', 'Batch'),
-            ('0', 'Per Transaction'),
-             ], 'Default Booking',
-        sort=False,)
-    company_sepa_batch_booking = fields.Function(fields.Boolean('Default Booking'),
-        getter='get_company_sepa_batch_booking',
-        )
-    company_sepa_charge_bearer = fields.Selection([
-            (None, ''),
-            ('DEBT', 'Debtor'),
-            ('CRED', 'Creditor'),
-            ('SHAR', 'Shared'),
-            ('SLEV', 'Service Level'),
-            ], 'Default Charge Bearer',
-        sort=False,)
+        ],
+    )
+    company_sepa_batch_booking_selection = fields.Selection(
+        [(None, ''), ('1', 'Batch'), ('0', 'Per Transaction')], 'Default Booking', sort=False
+    )
+    company_sepa_batch_booking = fields.Function(
+        fields.Boolean('Default Booking'), getter='get_company_sepa_batch_booking'
+    )
+    company_sepa_charge_bearer = fields.Selection(
+        [(None, ''), ('DEBT', 'Debtor'), ('CRED', 'Creditor'), ('SHAR', 'Shared'), ('SLEV', 'Service Level')],
+        'Default Charge Bearer',
+        sort=False,
+    )
 
     @staticmethod
     def default_company_sepa_batch_booking_selection():

@@ -26,7 +26,7 @@ from trytond.transaction import Transaction
 import datetime
 import logging
 
-__all__ = ['CondoPain', 'CondoPaymentGroup']
+__all__ = ['CondoPain', 'Group']
 
 
 logger = logging.getLogger(__name__)
@@ -41,12 +41,12 @@ class CondoPain(metaclass=PoolMeta):
         cls._order.insert(0, ('reference', 'DESC'))
 
 
-class CondoPaymentGroup(metaclass=PoolMeta):
+class Group(metaclass=PoolMeta):
     __name__ = 'condo.payment.group'
 
     @classmethod
     def __setup__(cls):
-        super(CondoPaymentGroup, cls).__setup__()
+        super(Group, cls).__setup__()
         cls._order.insert(0, ('date', 'DESC'))
         cls._order.insert(1, ('reference', 'DESC'))
 
@@ -65,7 +65,7 @@ class CondoPaymentGroup(metaclass=PoolMeta):
         if user <= 1:
             return []
 
-        super(CondoPaymentGroup, cls).search_readonly(name, domain)
+        super(Group, cls).search_readonly(name, domain)
 
     @classmethod
     def PreparePaymentGroup(cls, **kwargs):
@@ -77,10 +77,10 @@ class CondoPaymentGroup(metaclass=PoolMeta):
 
             if (
                 condominium
-                and condominium.is_Condominium
+                and condominium.is_condo
                 and condominium.sepa_creditor_identifier is not None
                 and condominium.party.active
-                and len(condominium.sepa_mandates) > 0
+                and len(condominium.mandates) > 0
             ):
 
                 bankaccountnumber = [

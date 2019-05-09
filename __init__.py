@@ -26,4 +26,4 @@ from .company import *
 
 
 def register():
-    Pool.register(Company, CondoPain, CondoPaymentGroup, module='condominium_payment_sepa_configuration', type_='model')
+    Pool.register(Company, CondoPain, Group, module='condominium_payment_sepa_configuration', type_='model')

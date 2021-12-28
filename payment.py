@@ -20,11 +20,11 @@
 ##############################################################################
 
 
-from trytond.pool import Pool, PoolMeta
-from trytond.transaction import Transaction
-
 import datetime
 import logging
+
+from trytond.pool import Pool, PoolMeta
+from trytond.transaction import Transaction
 
 __all__ = ['CondoPain', 'Group']
 

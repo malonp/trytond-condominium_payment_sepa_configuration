@@ -21,8 +21,9 @@
 
 
 from trytond.pool import Pool
-from .payment import *
+
 from .company import *
+from .payment import *
 
 
 def register():

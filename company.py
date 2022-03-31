@@ -22,7 +22,7 @@
 
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Bool, Eval, If
+from trytond.pyson import Eval, If
 
 __all__ = ['Company']
 
